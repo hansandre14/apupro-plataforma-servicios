@@ -1,0 +1,333 @@
+<div class="dashboard-page-wrapper" [ngClass]="{'dark-theme': isDarkMode}">
+  
+  <div class="bg-shape shape-1"></div>
+  <div class="bg-shape shape-2"></div>
+  <div class="bg-shape shape-3"></div>
+
+  <div class="container-fluid py-4 position-relative" style="z-index: 1;">
+    
+    <div class="hero-banner mb-5 rounded-4 p-4 p-md-5 d-flex flex-column flex-lg-row align-items-center justify-content-between shadow-lg" 
+         [ngClass]="esAdmin ? 'admin-glass' : 'apupro-glass'">
+      <div class="hero-content w-100">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h1 class="fw-bold text-white mb-1">
+              <i class="fas fa-crown text-warning me-2" *ngIf="esAdmin"></i>
+              ¡Hola, {{ esAdmin ? 'Administrador Superior' : usuarioActual?.nombre }}!
+            </h1>
+            <p class="text-white-50 mb-4">{{ esAdmin ? 'Gestión y moderación global del sistema.' : 'Bienvenido a ApuPro: Tu panel unificado de servicios en Abancay.' }}</p>
+          </div>
+          
+          <div class="d-flex">
+            <button class="btn btn-outline-light border-0 shadow-sm rounded-circle d-flex justify-content-center align-items-center me-2 position-relative" 
+                    title="Notificaciones" style="width: 45px; height: 45px; background-color: rgba(255,255,255,0.1);">
+              <i class="fas fa-bell"></i>
+              <span *ngIf="cantidadNotificaciones > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light animate__animated animate__pulse animate__infinite">
+                {{ cantidadNotificaciones }}
+              </span>
+            </button>
+            <button class="btn btn-outline-light border-0 shadow-sm rounded-circle d-none d-md-flex justify-content-center align-items-center me-2" 
+                    (click)="toggleTheme()" title="Cambiar Tema" style="width: 45px; height: 45px; background-color: rgba(255,255,255,0.1);">
+              <i class="fas" [ngClass]="isDarkMode ? 'fa-sun text-warning' : 'fa-moon'"></i>
+            </button>
+            <button class="btn btn-logout border-0 shadow-sm rounded-circle d-none d-md-flex justify-content-center align-items-center" 
+                    (click)="cerrarSesion()" title="Cerrar Sesión" style="width: 45px; height: 45px;">
+              <i class="fas fa-sign-out-alt"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-2 d-flex flex-wrap gap-2 align-items-center" *ngIf="!esAdmin">
+          <div class="btn-group shadow-sm me-md-3 mb-2 mb-md-0">
+            <button class="btn" [ngClass]="vistaActual === 'catalogo' ? 'btn-warning fw-bold text-dark' : 'btn-outline-light'" (click)="cambiarVista('catalogo')"><i class="fas fa-search me-2"></i>Buscar Servicios</button>
+            <button class="btn" [ngClass]="vistaActual === 'postulaciones' ? 'btn-warning fw-bold text-dark' : 'btn-outline-light'" (click)="cambiarVista('postulaciones')">Mis Propuestas</button>
+          </div>
+          <button class="btn shadow-sm me-md-3 mb-2 mb-md-0" [ngClass]="vistaActual === 'panel-empleador' ? 'btn-info fw-bold text-dark' : 'btn-outline-light'" (click)="cambiarVista('panel-empleador')"><i class="fas fa-bullhorn me-2"></i>Mis Pedidos (Cliente)</button>
+          <button class="btn shadow-sm mb-2 mb-md-0" [ngClass]="vistaActual === 'perfil' ? 'btn-light text-primary fw-bold' : 'btn-outline-light'" (click)="cambiarVista('perfil')"><i class="fas fa-user-edit me-2"></i>Mi Perfil</button>
+        </div>
+
+        <div class="mt-2 d-flex flex-wrap gap-2 align-items-center" *ngIf="esAdmin">
+          <button class="btn btn-light text-danger fw-bold shadow-sm" disabled><i class="fas fa-shield-alt me-2"></i> Acceso Privilegiado Activado</button>
+        </div>
+      </div>
+      
+      <div class="hero-stats d-none d-xl-flex bg-white bg-opacity-10 rounded-4 p-3 ms-4 mt-4 mt-lg-0 min-vw-25 border border-white border-opacity-25" *ngIf="!esAdmin">
+        <div class="stat-item text-center px-4 border-end border-light border-opacity-25"><h3 class="fw-bold text-warning mb-0">{{misPostulantes.length}}</h3><small class="text-white-50">Interesados en mí</small></div>
+        <div class="stat-item text-center px-4"><h3 class="fw-bold text-info mb-0">{{misPostulaciones.length}}</h3><small class="text-white-50">Mis ofertas enviadas</small></div>
+      </div>
+    </div>
+
+    <div *ngIf="vistaActual === 'admin' && esAdmin" class="container mt-4 animate__animated animate__fadeIn">
+      <h3 class="fw-bold text-danger mb-4"><i class="fas fa-chart-line me-2"></i> Panel de Control Global</h3>
+      
+      <div class="row mb-4 g-4" *ngIf="cargandoDatos">
+        <div class="col-md-4" *ngFor="let i of [1,2,3]"><div class="card glass-card border-0 shadow-sm rounded-4 p-4 h-100"><div class="skeleton mb-2 mx-auto" style="height: 50px; width: 80px; border-radius: 10px;"></div><div class="skeleton mx-auto" style="height: 20px; width: 150px; border-radius: 10px;"></div></div></div>
+      </div>
+
+      <div class="row mb-4 g-4" *ngIf="!cargandoDatos">
+        <div class="col-md-4"><div class="card glass-card border-0 shadow-sm rounded-4 text-center p-4 h-100 border-start border-4 border-primary"><h1 class="fw-bold display-4 text-primary mb-0">{{adminStats.total_usuarios}}</h1><p class="text-muted fw-bold mb-0 fs-6">Usuarios Registrados</p></div></div>
+        <div class="col-md-4"><div class="card glass-card border-0 shadow-sm rounded-4 text-center p-4 h-100 border-start border-4 border-success"><h1 class="fw-bold display-4 text-success mb-0">{{adminStats.total_trabajos}}</h1><p class="text-muted fw-bold mb-0 fs-6">Servicios Publicados</p></div></div>
+        <div class="col-md-4"><div class="card glass-card border-0 shadow-sm rounded-4 text-center p-4 h-100 border-start border-4 border-warning"><h1 class="fw-bold display-5 text-warning mb-0">S/ {{adminStats.dinero_movido}}</h1><p class="text-muted fw-bold mb-0 fs-6 mt-2">Dinero Movido (Verificado)</p></div></div>
+      </div>
+      <div class="card glass-card border-0 shadow-sm rounded-4 p-4 mt-5">
+        <h5 class="fw-bold text-dark mb-4"><i class="fas fa-users-cog text-danger me-2"></i> Gestión y Moderación de Usuarios</h5>
+        <div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead class="table-light text-muted small text-uppercase"><tr><th class="border-0 rounded-start-3">ID</th><th class="border-0">Nombre Completo</th><th class="border-0">DNI</th><th class="border-0">Email</th><th class="border-0">Teléfono</th><th class="border-0 rounded-end-3 text-center">Acción</th></tr></thead><tbody class="border-top-0"><tr *ngFor="let u of adminUsuarios" class="border-bottom"><td class="fw-bold text-secondary">#{{u.id}}</td><td class="fw-bold text-dark"><i class="fas fa-crown text-warning me-1" *ngIf="u.email === 'admin@admin.com'"></i>{{u.nombre}} {{u.apellido}}</td><td>{{u.dni || 'Sin registrar'}}</td><td>{{u.email}}</td><td>{{u.telefono || 'Sin registrar'}}</td><td class="text-center"><button class="btn btn-sm btn-outline-danger rounded-pill px-3 fw-bold" (click)="eliminarUsuarioSistema(u.id)" [disabled]="u.email === 'admin@admin.com'"><i class="fas fa-ban me-1"></i> Banear</button></td></tr></tbody></table></div>
+      </div>
+    </div>
+
+    <ng-container *ngIf="!esAdmin">
+      
+      <div class="row mb-5 animate__animated animate__fadeIn" *ngIf="vistaActual === 'catalogo' && !cargandoDatos">
+        <div class="col-12">
+          <div class="creative-banner p-4 p-md-5 rounded-4 shadow-sm position-relative overflow-hidden">
+            <div class="position-relative z-1 text-center mb-4">
+              <h3 class="fw-bold text-dark mb-1">El Ecosistema <span class="text-gradient">ApuPro</span></h3>
+              <p class="text-muted">Conectando el talento de Abancay de forma inteligente y segura.</p>
+            </div>
+            <div class="row g-4 position-relative z-1">
+              <div class="col-md-4 text-center"><div class="creative-icon-box bg-gradient-teal mx-auto mb-3 shadow"><i class="fas fa-bolt text-white fa-2x"></i></div><h6 class="fw-bold text-dark">Conexión Inmediata</h6><p class="small text-muted mb-0">Encuentra o publica servicios en tiempo real sin intermediarios.</p></div>
+              <div class="col-md-4 text-center"><div class="creative-icon-box bg-gradient-warning mx-auto mb-3 shadow"><i class="fas fa-shield-alt text-white fa-2x"></i></div><h6 class="fw-bold text-dark">100% Seguro</h6><p class="small text-muted mb-0">Verificación RENIEC y pagos protegidos mediante Yape.</p></div>
+              <div class="col-md-4 text-center"><div class="creative-icon-box bg-gradient-primary mx-auto mb-3 shadow"><i class="fas fa-star text-white fa-2x"></i></div><h6 class="fw-bold text-dark">Calidad Comprobada</h6><p class="small text-muted mb-0">Especialistas valorados por la propia comunidad de Apurímac.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="offers-section animate__animated animate__fadeInUp" *ngIf="vistaActual === 'catalogo'">
+        <div class="d-flex justify-content-between align-items-center mb-4"><h4 class="fw-bold text-dark border-start border-4 border-info ps-3">Servicios Solicitados</h4></div>
+        <div class="mb-4"><div class="input-group shadow-sm rounded-pill overflow-hidden border border-2 border-info"><span class="input-group-text bg-white border-0 text-info ps-4"><i class="fas fa-search"></i></span><input type="text" class="form-control border-0 py-3 bg-white fw-bold" placeholder="Buscar por servicio" [(ngModel)]="terminoBusqueda" (keyup)="filtrarTrabajos()"></div></div>
+        
+        <div class="row g-4" *ngIf="cargandoDatos">
+          <div class="col-md-4" *ngFor="let i of [1,2,3,4,5,6]">
+            <div class="offer-card glass-card p-4 rounded-4 shadow-sm border-0 h-100 d-flex flex-column">
+              <div class="skeleton" style="width: 80px; height: 25px; border-radius: 50px; margin-bottom: 15px;"></div>
+              <div class="skeleton mb-2" style="width: 70%; height: 22px; border-radius: 8px;"></div>
+              <div class="skeleton mb-4" style="width: 40%; height: 15px; border-radius: 8px;"></div>
+              <div class="mt-2 mb-4">
+                <div class="skeleton mb-2" style="width: 90%; height: 15px; border-radius: 8px;"></div>
+                <div class="skeleton" style="width: 60%; height: 15px; border-radius: 8px;"></div>
+              </div>
+              <div class="mt-auto pt-3 border-top border-muted border-opacity-10">
+                <div class="skeleton" style="width: 100%; height: 45px; border-radius: 50px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4" *ngIf="!cargandoDatos">
+          <div class="col-md-4" *ngFor="let t of trabajosFiltrados">
+            <div class="offer-card glass-card p-4 rounded-4 shadow-sm border-0 h-100 d-flex flex-column position-relative">
+              <div class="mb-3"><span class="badge bg-info bg-opacity-10 text-info mb-2 px-3 py-2 rounded-pill">Requerido</span><h5 class="fw-bold text-dark mb-1">{{t.titulo}}</h5><h6 class="text-muted small fw-bold text-uppercase"><i class="fas fa-user-circle me-1"></i> {{t.empresa || 'Cliente Particular'}}</h6></div>
+              <div class="small text-muted mb-4"><p class="mb-2"><i class="fas fa-map-marker-alt me-2 text-danger"></i> {{t.ubicacion}}</p><p class="mb-0"><i class="fas fa-money-bill-wave me-2 text-success"></i> Presupuesto: <strong class="text-dark fs-6">S/ {{t.salario}}</strong></p></div>
+              <div class="mt-auto pt-3 border-top border-muted border-opacity-10">
+                <button *ngIf="!yaPostulo(t.id)" class="btn btn-primary-gradient w-100 fw-bold shadow-sm rounded-pill" (click)="abrirModalPropuesta(t.id)"><i class="fas fa-paper-plane me-2"></i>Ofrecer mis Servicios</button>
+                <button *ngIf="yaPostulo(t.id)" class="btn btn-light text-success border w-100 fw-bold shadow-sm rounded-pill" disabled><i class="fas fa-check-circle me-2"></i>Propuesta Enviada</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="text-center py-5 glass-card rounded-4 shadow-sm mt-4" *ngIf="!cargandoDatos && trabajosFiltrados.length === 0"><h5 class="text-muted"><i class="fas fa-search mb-3 fa-2x opacity-50 d-block"></i>No se encontraron servicios.</h5></div>
+      </div>
+
+      <div *ngIf="vistaActual === 'panel-empleador'" class="animate__animated animate__fadeIn">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3"><div><h4 class="fw-bold text-dark border-start border-4 border-info ps-3 mb-1">Mi Panel de Cliente</h4><span class="badge bg-info text-dark fs-6 rounded-pill px-3 shadow-sm mt-2">Propuestas recibidas: {{ misPostulantes.length }}</span></div><button class="btn btn-primary-gradient fw-bold shadow-sm rounded-pill px-4 py-2" (click)="abrirModalNuevoServicio()"><i class="fas fa-plus-circle me-2"></i> Publicar Nuevo Pedido</button></div>
+        <h5 class="fw-bold mb-3 mt-4 text-dark"><i class="fas fa-clipboard-list text-info me-2"></i> Mis Anuncios Publicados</h5>
+        
+        <div class="row g-3 mb-5" *ngIf="!cargandoDatos">
+          <div class="col-md-4" *ngFor="let t of misTrabajosPublicados"><div class="card glass-card shadow-sm border-0 rounded-4"><div class="card-body p-4"><h5 class="fw-bold text-dark text-truncate mb-1">{{t.titulo}}</h5><p class="small text-muted mb-3"><i class="fas fa-map-marker-alt text-danger me-1"></i> {{t.ubicacion}}</p><h5 class="fw-bold text-success mb-4">S/ {{t.salario}}</h5><div class="d-flex justify-content-between"><button class="btn btn-sm btn-outline-info rounded-pill px-4 fw-bold" (click)="abrirModalEditarTrabajo(t)"><i class="fas fa-edit"></i> Editar</button><button class="btn btn-sm btn-outline-danger rounded-pill px-3 fw-bold" (click)="eliminarTrabajo(t.id)"><i class="fas fa-trash"></i></button></div></div></div></div>
+          <div *ngIf="misTrabajosPublicados.length === 0" class="col-12 text-center text-muted small glass-card p-4 rounded-4 border-0">No tienes anuncios publicados.</div>
+        </div>
+
+        <hr class="mb-4 text-muted opacity-25"><h5 class="fw-bold mb-3 mt-4 text-dark"><i class="fas fa-user-check text-success me-2"></i> Especialistas Interesados</h5>
+        
+        <div class="table-responsive shadow-sm glass-card rounded-4 p-3" *ngIf="cargandoDatos">
+          <table class="table align-middle mb-0 bg-transparent">
+             <tbody>
+               <tr *ngFor="let i of [1,2,3]"><td class="py-3"><div class="d-flex align-items-center"><div class="skeleton rounded-circle me-3" style="width: 50px; height: 50px;"></div><div><div class="skeleton mb-2" style="width: 150px; height: 15px; border-radius: 4px;"></div><div class="skeleton" style="width: 100px; height: 12px; border-radius: 4px;"></div></div></div></td><td><div class="skeleton" style="width: 80px; height: 25px; border-radius: 50px;"></div></td></tr>
+             </tbody>
+          </table>
+        </div>
+
+        <div class="table-responsive shadow-sm glass-card rounded-4 p-3" *ngIf="!cargandoDatos && misPostulantes.length > 0">
+          <table class="table table-hover align-middle mb-0 bg-transparent">
+            <thead class="text-muted small text-uppercase"><tr><th class="ps-3 border-0">Especialista</th><th class="border-0">Propuesta</th><th class="border-0">Servicio</th><th class="border-0">Currículum</th><th class="border-0">Estado</th><th class="border-0 text-center">Acciones</th></tr></thead>
+            <tbody class="border-top-0">
+              <tr *ngFor="let p of misPostulantes" class="border-bottom border-light">
+                <td class="ps-3 py-3">
+                  <div class="d-flex align-items-center">
+                    <img [src]="p.foto || 'assets/img/default-avatar.png'" class="rounded-circle shadow-sm me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                    <div>
+                      <h6 class="mb-0 fw-bold text-dark">{{ p.nombre }}</h6>
+                      <div class="d-flex flex-wrap gap-1 my-1">
+                        <span *ngFor="let badge of obtenerInsignias(p)" class="badge badge-insignia border" [ngClass]="[badge.color, badge.border]">
+                          <i class="fas {{badge.icono}}"></i> {{badge.texto}}
+                        </span>
+                      </div>
+                      <div class="text-warning small mb-1" *ngIf="p.total_resenas > 0" (click)="abrirModalVerResenas(p)" style="cursor: pointer;"><i class="fas fa-star"></i> <span class="fw-bold text-dark">{{ p.promedio_estrellas }}</span><span class="text-info text-decoration-underline ms-1" style="font-size: 0.75rem;">(Ver reseñas)</span></div>
+                    </div>
+                  </div>
+                </td>
+                <td><p class="small text-muted mb-0 fst-italic" style="max-width: 250px;">"{{ p.mensaje }}"</p></td><td><span class="badge bg-light text-dark border rounded-pill px-3 py-2">{{ p.trabajo_titulo }}</span></td><td><a *ngIf="p.cv" [href]="p.cv" target="_blank" class="btn btn-sm btn-outline-danger rounded-pill shadow-sm"><i class="fas fa-file-pdf"></i> PDF</a><span *ngIf="!p.cv" class="badge bg-light text-secondary border rounded-pill">Sin Archivo</span></td><td><span class="badge rounded-pill shadow-sm px-3 py-2 text-capitalize" [ngClass]="{'bg-warning text-dark': p.estado==='pendiente', 'bg-success': p.estado==='aceptado', 'bg-danger': p.estado==='rechazado', 'bg-info': p.estado==='verificado', 'bg-secondary': p.estado==='finalizado'}">{{ p.estado }}</span></td>
+                <td class="text-center">
+                  <div class="btn-group shadow-sm rounded-pill overflow-hidden">
+                    <button *ngIf="p.estado === 'pendiente'" class="btn btn-sm btn-success px-3" (click)="cambiarEstadoCandidato(p.postulacion_id, 'Aceptado')"><i class="fas fa-check"></i></button>
+                    <button *ngIf="p.estado === 'pendiente'" class="btn btn-sm btn-danger px-3" (click)="cambiarEstadoCandidato(p.postulacion_id, 'Rechazado')"><i class="fas fa-times"></i></button>
+                    <button *ngIf="p.estado === 'aceptado'" class="btn btn-sm text-white px-3" style="background-color: #742284;" (click)="abrirModalPago(p)"><i class="fas fa-qrcode me-1"></i> Pagar</button>
+                    <button *ngIf="p.estado === 'verificado'" class="btn btn-sm btn-warning text-dark fw-bold px-3" (click)="abrirModalResena(p)"><i class="fas fa-star text-dark me-1"></i> Calificar</button>
+                    <span *ngIf="p.estado === 'finalizado'" class="badge bg-secondary py-2 px-3 rounded-0"><i class="fas fa-check-double me-1"></i> Terminado</span>
+                  </div>
+                  <button *ngIf="p.estado === 'aceptado' || p.estado === 'verificado'" class="btn btn-sm btn-whatsapp ms-2 rounded-circle shadow-sm" title="Contactar por WhatsApp" (click)="contactarWhatsApp(p.telefono, p.nombre, p.trabajo_titulo)"><i class="fab fa-whatsapp"></i></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="alert glass-card text-center shadow-sm border-0 rounded-4 py-5" *ngIf="!cargandoDatos && misPostulantes.length === 0"><h5 class="text-muted fw-bold mt-3">Aún no tienes propuestas</h5></div>
+      </div>
+
+      <div class="postulaciones-section animate__animated animate__fadeIn" *ngIf="vistaActual === 'postulaciones'">
+        <h4 class="fw-bold text-dark border-start border-4 border-info ps-3 mb-4">Seguimiento de Mis Propuestas</h4>
+        
+        <div class="row g-4" *ngIf="cargandoDatos">
+          <div class="col-md-6" *ngFor="let i of [1,2,4,5]">
+            <div class="card glass-card border-0 shadow-sm p-4 h-100"><div class="d-flex justify-content-between align-items-start mb-3"><div class="w-75"><div class="skeleton mb-2" style="width: 80%; height: 20px; border-radius: 6px;"></div><div class="skeleton" style="width: 40%; height: 12px; border-radius: 6px;"></div></div><div class="skeleton" style="width: 60px; height: 25px; border-radius: 50px;"></div></div><hr class="text-muted opacity-25"><div class="d-flex justify-content-between align-items-center"><div class="skeleton" style="width: 30%; height: 15px; border-radius: 6px;"></div><div class="skeleton" style="width: 20%; height: 20px; border-radius: 6px;"></div></div></div>
+          </div>
+        </div>
+
+        <div class="row g-4" *ngIf="!cargandoDatos">
+          <div class="col-md-6" *ngFor="let p of misPostulaciones">
+            <div class="card postulacion-card glass-card border-0 shadow-sm p-4 h-100" [style.border-left-color]="p.estado === 'aceptado' || p.estado === 'verificado' ? '#28a745' : (p.estado === 'rechazado' ? '#dc3545' : (p.estado === 'finalizado' ? '#6c757d' : '#00b4db'))"><div class="d-flex justify-content-between align-items-start mb-3"><div><h5 class="fw-bold text-dark mb-1">{{p.titulo_trabajo || p.titulo}}</h5><p class="small text-muted mb-0"><i class="fas fa-map-marker-alt me-1 text-danger"></i> {{p.ubicacion}}</p></div><span class="badge px-3 py-2 rounded-pill shadow-sm text-capitalize bg-light text-dark">{{ p.estado || 'pendiente' }}</span></div><hr class="text-muted opacity-25"><div class="d-flex justify-content-between align-items-center small"><span class="text-muted"><i class="fas fa-calendar-alt me-1"></i> Enviada el: {{ p.fecha_postulacion ? (p.fecha_postulacion | date:'dd/MM/yyyy') : 'Reciente' }}</span><span class="fw-bold text-success fs-6"><i class="fas fa-money-bill-wave me-1"></i> S/ {{p.salario}}</span></div><div class="mt-3 pt-3 border-top border-warning border-opacity-50" *ngIf="p.estado === 'aceptado' && p.voucher_url && p.estado_pago !== 'verificado'"><div class="d-flex justify-content-between align-items-center bg-warning bg-opacity-10 p-2 rounded-3"><span class="small text-dark fw-bold"><i class="fas fa-bell text-warning me-2"></i> ¡El cliente ya pagó!</span><button class="btn btn-sm btn-warning fw-bold shadow-sm rounded-pill px-3" (click)="abrirModalVerVoucher(p)">Ver Comprobante</button></div></div><div class="mt-3 pt-3 border-top border-success border-opacity-50" *ngIf="p.estado_pago === 'verificado' && p.estado !== 'finalizado'"><div class="d-flex justify-content-center align-items-center bg-success bg-opacity-10 p-2 rounded-3"><span class="small text-success fw-bold"><i class="fas fa-check-double me-2"></i> Pago verificado.</span></div></div><div class="mt-3 pt-3 border-top border-secondary border-opacity-50" *ngIf="p.estado === 'finalizado'"><div class="d-flex justify-content-center align-items-center bg-secondary bg-opacity-10 p-2 rounded-3"><span class="small text-secondary fw-bold"><i class="fas fa-award me-2"></i> Trabajo Finalizado. ¡Buen trabajo!</span></div></div></div>
+          </div>
+        </div>
+        <div class="text-center py-5 glass-card rounded-4 shadow-sm mt-4" *ngIf="!cargandoDatos && misPostulaciones.length === 0"><h5 class="text-muted mt-3">Aún no has enviado propuestas.</h5></div>
+      </div>
+
+      <div class="perfil-section animate__animated animate__fadeIn" *ngIf="vistaActual === 'perfil'">
+        <h4 class="fw-bold text-dark border-start border-4 border-info ps-3 mb-4">Mi Perfil de Especialista</h4>
+        <div class="row g-4">
+          <div class="col-md-4">
+            <div class="card glass-card border-0 shadow-sm rounded-4 text-center p-4 h-100">
+              <input type="file" #fileFoto (change)="onFotoSeleccionada($event)" accept="image/png, image/jpeg" class="d-none">
+              <div class="position-relative d-inline-block mx-auto mb-3">
+                <img [src]="usuarioActual?.foto || 'assets/img/default-avatar.png'" class="rounded-circle shadow-sm" style="width: 150px; height: 150px; object-fit: cover; border: 4px solid #fff;">
+                <button type="button" class="btn btn-info btn-sm position-absolute bottom-0 end-0 rounded-circle text-white shadow" style="width: 35px; height: 35px;" (click)="fileFoto.click()"><i class="fas fa-camera"></i></button>
+              </div>
+              <h5 class="fw-bold text-dark mb-1">{{usuarioActual?.nombre}} {{usuarioActual?.apellido}}</h5>
+              <div class="d-flex justify-content-center flex-wrap gap-1 my-2">
+                <span *ngFor="let badge of obtenerInsignias(usuarioActual, reputacion)" class="badge badge-insignia border shadow-sm" [ngClass]="[badge.color, badge.border]">
+                  <i class="fas {{badge.icono}}"></i> {{badge.texto}}
+                </span>
+              </div>
+              <div class="my-3 p-3 bg-white rounded-4 shadow-sm border border-info border-opacity-25" (click)="abrirModalVerResenas(usuarioActual)" style="cursor: pointer;">
+                <h2 class="fw-bold text-dark mb-0">{{ reputacion.promedio }} <i class="fas fa-star text-warning"></i></h2>
+                <p class="small text-info fw-bold mb-0 mt-1">Ver mis reseñas</p>
+              </div>
+              <p class="text-muted small mb-3"><i class="fas fa-id-card me-1"></i> DNI: {{usuarioActual?.dni}} <i class="fas fa-check-circle text-success ms-1"></i></p>
+              <hr class="text-muted opacity-25">
+              <div class="text-start mt-3"><h6 class="fw-bold small text-dark mb-3">Mi Portafolio (PDF)</h6><input type="file" #fileCv (change)="onCvSeleccionado($event)" accept=".pdf" class="d-none"><div class="p-3 border border-2 border-info border-opacity-50 rounded-4 text-center bg-white" style="border-style: dashed !important;"><i class="fas fa-file-pdf fa-2x mb-2" [ngClass]="cvParaSubir || usuarioActual?.cv ? 'text-success' : 'text-danger'"></i><button type="button" class="btn w-100 fw-bold rounded-pill mt-2 btn-sm" [ngClass]="cvParaSubir ? 'btn-success' : 'btn-outline-info'" (click)="fileCv.click()">{{ cvParaSubir ? 'Cambiar Archivo' : 'Cargar PDF' }}</button></div></div>
+            </div>
+          </div>
+          <div class="col-md-8"><div class="card glass-card border-0 shadow-sm rounded-4 p-4 p-md-5 h-100"><h5 class="fw-bold mb-4 text-dark border-bottom border-light pb-3">Información de Contacto y Experiencia</h5><form (ngSubmit)="actualizarPerfil()"><div class="row g-3 mb-3"><div class="col-md-6"><label class="small fw-bold text-muted">Teléfono Celular</label><input type="text" class="form-control form-control-glass" name="telefono" [(ngModel)]="usuarioActual.telefono"></div><div class="col-md-6"><label class="small fw-bold text-muted">Correo (No editable)</label><input type="email" class="form-control form-control-glass text-muted" name="email" [(ngModel)]="usuarioActual.email" readonly></div></div><div class="mb-3"><label class="small fw-bold text-muted">Dirección Domiciliaria</label><input type="text" class="form-control form-control-glass" name="direccion" [(ngModel)]="usuarioActual.direccion"></div><div class="mb-3"><label class="small fw-bold text-muted">Especialidad Principal</label><input type="text" class="form-control form-control-glass" name="ocupacion" [(ngModel)]="usuarioActual.ocupacionNombre"></div><div class="mb-4"><label class="small fw-bold text-muted">Sobre mí</label><textarea class="form-control form-control-glass" name="biografia" [(ngModel)]="usuarioActual.biografia" rows="4"></textarea></div><div class="text-end mt-4"><button type="submit" class="btn btn-primary-gradient fw-bold px-5 py-3 rounded-pill shadow-sm"><i class="fas fa-save me-2"></i> Guardar Cambios</button></div></form></div></div>
+        </div>
+      </div>
+    </ng-container>
+
+  </div>
+
+  <div class="modal fade" id="modalPropuesta" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 rounded-4 shadow-lg"><div class="modal-header bg-gradient-teal text-white border-0"><h5 class="modal-title fw-bold">🚀 Envía tu Propuesta</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body p-4"><textarea class="form-control form-control-glass" [(ngModel)]="mensajePropuesta" rows="4" placeholder="Escribe aquí tu propuesta para el cliente..."></textarea></div><div class="modal-footer border-0"><button type="button" class="btn btn-primary-gradient rounded-pill px-4" (click)="confirmarPropuesta()">Enviar</button></div></div></div></div>
+  
+  <div class="modal fade" id="modalNuevoServicio" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 rounded-4 shadow-lg glass-card">
+        <div class="modal-header bg-gradient-primary text-white border-0 rounded-top-4">
+          <h5 class="modal-title fw-bold"><i class="fas fa-plus-circle me-2"></i> Publicar Solicitud</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="mb-4">
+            <label class="small fw-bold text-muted mb-2">Sugerencias Rápidas:</label>
+            <div class="d-flex flex-wrap gap-2">
+              <span class="badge chip-sugerencia shadow-sm" (click)="seleccionarChip('Electricidad')"><i class="fas fa-bolt text-warning"></i> Electricidad</span>
+              <span class="badge chip-sugerencia shadow-sm" (click)="seleccionarChip('Albañilería')"><i class="fas fa-hammer text-danger"></i> Albañilería</span>
+              <span class="badge chip-sugerencia shadow-sm" (click)="seleccionarChip('Servicio Técnico')"><i class="fas fa-laptop text-primary"></i> Informática</span>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="small fw-bold text-muted mb-1">Categoría del Servicio</label>
+            <input list="listaOcupaciones" class="form-control form-control-glass fw-bold text-primary" [(ngModel)]="nuevoServicio.categoria" placeholder="Selecciona o escribe una categoría...">
+            <datalist id="listaOcupaciones"><option *ngFor="let o of ocupacionesBD" [value]="o.nombre"></option></datalist>
+          </div>
+          <div class="mb-3">
+            <label class="small fw-bold text-muted mb-1">¿Qué necesitas exactamente?</label>
+            <input type="text" class="form-control form-control-glass" [(ngModel)]="nuevoServicio.titulo" placeholder="">
+          </div>
+          <div class="row g-2 mb-2">
+            <div class="col-md-7"><label class="small fw-bold text-muted mb-1">Ubicación</label><div class="input-group"><span class="input-group-text form-control-glass border-end-0 text-danger"><i class="fas fa-map-marker-alt"></i></span><input type="text" class="form-control form-control-glass border-start-0 ps-0" [(ngModel)]="nuevoServicio.ubicacion" placeholder=""></div></div>
+            <div class="col-md-5"><label class="small fw-bold text-muted mb-1">Presupuesto (S/)</label><div class="input-group"><span class="input-group-text form-control-glass border-end-0 text-success fw-bold">S/</span><input type="number" class="form-control form-control-glass border-start-0 ps-0 fw-bold" [(ngModel)]="nuevoServicio.salario" placeholder=""></div></div>
+          </div>
+        </div>
+        <div class="modal-footer border-0 pb-4 px-4"><button type="button" class="btn btn-primary-gradient w-100 rounded-pill fw-bold py-3 fs-5" (click)="publicarServicio()"><i class="fas fa-paper-plane me-2"></i> Publicar Ahora</button></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal fade" id="modalEditarTrabajo" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content glass-card border-0 rounded-4 shadow-lg" style="background: linear-gradient(135deg, rgba(20, 20, 20, 0.95), rgba(40, 40, 40, 0.9));">
+        
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold text-white"><i class="fas fa-edit me-2 text-info"></i> Editar Anuncio</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        
+        <div class="modal-body p-4">
+          <div class="mb-4">
+            <span class="badge bg-warning text-dark border border-warning px-3 py-2 rounded-pill"><i class="fas fa-exclamation-circle me-1"></i> Requerido</span>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-light opacity-75">Título de Servicio:</label>
+            <div class="d-flex align-items-center bg-dark bg-opacity-50 rounded-pill px-3 py-2 border border-secondary border-opacity-25">
+              <i class="fas fa-cog text-info me-2"></i>
+              <input type="text" class="form-control bg-transparent border-0 text-white shadow-none px-1" [(ngModel)]="trabajoEditando.titulo">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-light opacity-75">Ubicación:</label>
+            <div class="d-flex align-items-center bg-dark bg-opacity-50 rounded-pill px-3 py-2 border border-secondary border-opacity-25">
+              <i class="fas fa-map-marker-alt text-danger me-2 ms-1"></i>
+              <input type="text" class="form-control bg-transparent border-0 text-white shadow-none px-1" [(ngModel)]="trabajoEditando.ubicacion">
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label small fw-bold text-light opacity-75">Monto a Pagar (S/):</label>
+            <div class="d-flex align-items-center bg-dark bg-opacity-50 rounded-pill px-3 py-2 border border-secondary border-opacity-25">
+              <span class="text-success fw-bold me-2 ms-1 fs-5">S/</span>
+              <input type="number" class="form-control bg-transparent border-0 text-white shadow-none px-1 fw-bold fs-5" [(ngModel)]="trabajoEditando.salario">
+            </div>
+          </div>
+
+          <div class="mb-2 text-start">
+            <span class="badge bg-info bg-opacity-25 text-info border border-info border-opacity-50 px-3 py-2 rounded-pill">
+              <i class="fas fa-wrench me-1"></i> {{ trabajoEditando.titulo.split(']')[0].replace('[', '') || 'Servicio General' }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="modal-footer border-0 pt-0 pb-4 px-4 justify-content-center">
+          <button type="button" class="btn w-100 rounded-pill fw-bold py-3 fs-6 d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #8A2BE2, #4169E1); color: white; border: none; box-shadow: 0 4px 15px rgba(65, 105, 225, 0.4);" (click)="guardarEdicionTrabajo()">
+            Guardar Cambios <i class="fas fa-pencil-alt ms-2"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal fade" id="modalPagoYape" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 rounded-4 shadow-lg"><div class="modal-header text-white border-0" style="background-color: #742284;"><h5 class="modal-title fw-bold">Pago Seguro Yape</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body text-center p-4"><input type="file" #fileVoucher (change)="onVoucherSeleccionado($event)" class="d-none"><div class="p-4 border border-2 rounded-4 bg-light shadow-sm" (click)="fileVoucher.click()" style="cursor: pointer;"><i class="fas fa-camera fa-3x mb-2 text-muted"></i><p class="mb-0 fw-bold text-muted">{{ voucherParaSubir ? '¡Comprobante Cargado!' : 'Haz clic para subir la foto' }}</p></div></div><div class="modal-footer border-0"><button type="button" class="btn text-white rounded-pill px-4 fw-bold" style="background-color: #742284;" (click)="confirmarPagoYape()">Enviar Comprobante</button></div></div></div></div>
+  <div class="modal fade" id="modalVerVoucher" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 rounded-4 shadow-lg"><div class="modal-header bg-warning border-0"><h5 class="modal-title fw-bold text-dark">Validar Pago</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center p-4"><img [src]="voucherSeleccionado?.voucher_url" class="img-fluid rounded-4 shadow-sm border"></div><div class="modal-footer border-0 justify-content-center"><button type="button" class="btn btn-outline-danger rounded-pill px-4" (click)="rechazarVoucher()">Rechazar</button><button type="button" class="btn btn-success rounded-pill px-4" (click)="confirmarVoucher()">Aceptar Pago</button></div></div></div></div>
+  <div class="modal fade" id="modalResena" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 rounded-4 shadow-lg"><div class="modal-header bg-warning border-0"><h5 class="modal-title fw-bold text-dark">Calificar Especialista</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center p-4"><div class="mb-4"><i class="fas fa-star fa-2x mx-1" style="cursor:pointer; transition: 0.2s;" [ngClass]="resenaActual.puntuacion >= 1 ? 'text-warning' : 'text-muted'" (click)="setEstrellas(1)"></i><i class="fas fa-star fa-2x mx-1" style="cursor:pointer; transition: 0.2s;" [ngClass]="resenaActual.puntuacion >= 2 ? 'text-warning' : 'text-muted'" (click)="setEstrellas(2)"></i><i class="fas fa-star fa-2x mx-1" style="cursor:pointer; transition: 0.2s;" [ngClass]="resenaActual.puntuacion >= 3 ? 'text-warning' : 'text-muted'" (click)="setEstrellas(3)"></i><i class="fas fa-star fa-2x mx-1" style="cursor:pointer; transition: 0.2s;" [ngClass]="resenaActual.puntuacion >= 4 ? 'text-warning' : 'text-muted'" (click)="setEstrellas(4)"></i><i class="fas fa-star fa-2x mx-1" style="cursor:pointer; transition: 0.2s;" [ngClass]="resenaActual.puntuacion >= 5 ? 'text-warning' : 'text-muted'" (click)="setEstrellas(5)"></i></div><textarea class="form-control form-control-glass" [(ngModel)]="resenaActual.comentario" rows="3" placeholder="Deja un comentario..."></textarea></div><div class="modal-footer border-0 justify-content-center"><button type="button" class="btn btn-warning rounded-pill px-5 fw-bold" (click)="enviarResena()">Finalizar y Guardar</button></div></div></div></div>
+  <div class="modal fade" id="modalVerResenas" tabindex="-1"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content border-0 rounded-4 shadow-lg"><div class="modal-header bg-dark text-white border-0"><h5 class="modal-title fw-bold"><i class="fas fa-comments text-warning me-2"></i> Reseñas</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light p-4"><div *ngFor="let r of resenasViendo" class="card border-0 shadow-sm mb-3 rounded-4"><div class="card-body"><h6 class="fw-bold text-dark mb-2">{{ r.cliente_nombre }} <span class="badge bg-warning text-dark float-end"><i class="fas fa-star"></i> {{ r.puntuacion }}.0</span></h6><p class="mb-0 small text-muted fst-italic">"{{ r.comentario }}"</p></div></div><div *ngIf="resenasViendo.length === 0" class="text-center text-muted py-4"><i class="far fa-sad-tear fa-3x mb-3 opacity-50"></i><p>Sin comentarios aún.</p></div></div></div></div></div>
+
+</div>

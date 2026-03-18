@@ -1,0 +1,151 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<div class="register-page-wrapper">
+  
+  <div class="bg-shape shape-1"></div>
+  <div class="bg-shape shape-2"></div>
+  <div class="bg-shape shape-3"></div>
+  
+  <div class="register-card shadow-lg animate__animated animate__fadeInUp">
+    
+    <div class="register-header text-center pb-4 mb-4 border-bottom border-light border-opacity-10">
+      <h2 class="fw-bold text-white mb-2"><i class="fas fa-user-plus text-warning me-2"></i> Únete a ApuPro</h2>
+      <p class="text-white-50 mb-0">Crea tu cuenta profesional y conecta con miles de clientes en Abancay.</p>
+    </div>
+
+    <div class="register-body">
+      
+      <div class="row">
+        <div class="col-lg-4 mb-4 mb-lg-0 pe-lg-4 border-end border-light border-opacity-10 d-none d-lg-block">
+          <h5 class="fw-bold text-warning mb-4"><i class="fas fa-shield-alt me-2"></i> ¿Por qué ApuPro?</h5>
+          
+          <div class="d-flex mb-4 align-items-start">
+            <div class="icon-box-small bg-white bg-opacity-10 rounded-circle p-2 me-3 text-success">
+              <i class="fas fa-id-card"></i>
+            </div>
+            <div>
+              <h6 class="text-white fw-bold mb-1 small">Identidad Verificada</h6>
+              <p class="text-white-50 small mb-0" style="font-size: 0.8rem;">Conectado a RENIEC para mayor seguridad.</p>
+            </div>
+          </div>
+          
+          <div class="d-flex mb-4 align-items-start">
+            <div class="icon-box-small bg-white bg-opacity-10 rounded-circle p-2 me-3 text-info">
+              <i class="fas fa-briefcase"></i>
+            </div>
+            <div>
+              <h6 class="text-white fw-bold mb-1 small">Más Trabajo</h6>
+              <p class="text-white-50 small mb-0" style="font-size: 0.8rem;">Encuentra oportunidades locales rápido.</p>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-start">
+            <div class="icon-box-small bg-white bg-opacity-10 rounded-circle p-2 me-3 text-warning">
+              <i class="fas fa-star"></i>
+            </div>
+            <div>
+              <h6 class="text-white fw-bold mb-1 small">Construye Reputación</h6>
+              <p class="text-white-50 small mb-0" style="font-size: 0.8rem;">Destaca con las reseñas de tus clientes.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-8 ps-lg-4">
+          <form (ngSubmit)="registrar()">
+            
+            <div class="card bg-white bg-opacity-10 border-0 rounded-4 p-3 mb-4">
+              <label class="form-label small fw-bold text-warning mb-2"><i class="fas fa-search me-1"></i> VALIDACIÓN DE IDENTIDAD</label>
+              <div class="input-group">
+                <span class="input-group-text bg-white border-0 text-primary"><i class="fas fa-id-card"></i></span>
+                <input type="text" class="form-control border-0 py-3 fw-bold text-dark" name="dni" [(ngModel)]="usuario.dni" maxlength="8" placeholder="Ingresa tu DNI (8 dígitos)">
+                <button class="btn btn-warning px-4 fw-bold shadow-sm text-dark" type="button" (click)="buscarDNI()" [disabled]="cargandoReniec">
+                  <i class="fas" [ngClass]="cargandoReniec ? 'fa-spinner fa-spin' : 'fa-check-circle'"></i> {{ cargandoReniec ? 'Buscando...' : 'VALIDAR' }}
+                </button>
+              </div>
+              <small class="text-white-50 mt-2 d-block"><i class="fas fa-info-circle"></i> Debes validar tu DNI para autocompletar tus nombres.</small>
+            </div>
+
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <label class="small fw-bold text-white-50 mb-1">Nombres</label>
+                <div class="input-group-custom">
+                  <span class="input-icon"><i class="fas fa-user text-primary opacity-50"></i></span>
+                  <input type="text" class="form-control bg-light border-0 fw-bold" [(ngModel)]="usuario.nombre" name="nombre" readonly placeholder="Se autocompleta con RENIEC">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="small fw-bold text-white-50 mb-1">Apellidos</label>
+                <div class="input-group-custom">
+                  <span class="input-icon"><i class="fas fa-user text-primary opacity-50"></i></span>
+                  <input type="text" class="form-control bg-light border-0 fw-bold" [(ngModel)]="usuario.apellido" name="apellido" readonly placeholder="Se autocompleta con RENIEC">
+                </div>
+              </div>
+              <div class="col-md-5">
+                <label class="small fw-bold text-white-50 mb-1">Teléfono Celular</label>
+                <div class="input-group-custom">
+                  <span class="input-icon"><i class="fas fa-mobile-alt text-primary opacity-50"></i></span>
+                  <input type="text" class="form-control" [(ngModel)]="usuario.telefono" name="telefono" placeholder="">
+                </div>
+              </div>
+              <div class="col-md-7">
+                <label class="small fw-bold text-white-50 mb-1">Dirección Domiciliaria</label>
+                <div class="input-group-custom">
+                  <span class="input-icon"><i class="fas fa-map-marker-alt text-primary opacity-50"></i></span>
+                  <input type="text" class="form-control" [(ngModel)]="usuario.direccion" name="direccion" placeholder="">
+                </div>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <label class="small fw-bold text-white-50 mb-1">Especialidad <span class="fw-normal">(Opcional)</span></label>
+                <div class="input-group-custom">
+                  <span class="input-icon"><i class="fas fa-tools text-primary opacity-50"></i></span>
+                  <input type="text" class="form-control" [(ngModel)]="usuario.ocupacionNombre" name="ocupacion" placeholder="">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="small fw-bold text-white-50 mb-1">Correo Electrónico</label>
+                <div class="input-group-custom">
+                  <span class="input-icon"><i class="fas fa-envelope text-primary opacity-50"></i></span>
+                  <input type="email" class="form-control" [(ngModel)]="usuario.email" name="email" placeholder="">
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <label class="small fw-bold text-white-50 mb-1">Contraseña Segura</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-white border-0 text-primary"><i class="fas fa-lock"></i></span>
+                  <input [type]="verPass ? 'text' : 'password'" class="form-control border-0 py-3" [(ngModel)]="usuario.password" name="password" placeholder="Mínimo 8 caracteres">
+                  <button class="btn bg-white border-0 text-muted" type="button" (click)="togglePass()"><i class="fas" [ngClass]="verPass ? 'fa-eye-slash' : 'fa-eye'"></i></button>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="small fw-bold text-white-50 mb-1">Confirmar Contraseña</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-white border-0 text-primary"><i class="fas fa-check-double"></i></span>
+                  <input [type]="verPass ? 'text' : 'password'" class="form-control border-0 py-3" [(ngModel)]="usuario.confirmPassword" name="confirmPassword" placeholder="Repite tu contraseña">
+                </div>
+              </div>
+              <div class="col-12 mt-1">
+                <p class="small text-warning mb-0" style="font-size: 0.75rem;"><i class="fas fa-exclamation-triangle"></i> Tu contraseña debe tener: Mayúscula, minúscula, número y un símbolo (@$!%*?&.).</p>
+              </div>
+            </div>
+
+            <button class="btn btn-primary-gradient w-100 py-3 fw-bold shadow-sm mt-3 fs-5" type="submit">
+              <i class="fas fa-rocket me-2"></i> Crear mi cuenta profesional
+            </button>
+
+            <div class="text-center mt-4">
+              <p class="text-white-50 small mb-0">¿Ya tienes una cuenta?</p>
+              <a class="text-warning fw-bold text-decoration-none custom-link" routerLink="/login">Inicia sesión aquí →</a>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

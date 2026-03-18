@@ -1,0 +1,169 @@
+/* registro.css - Diseño ApuPro Consistente */
+
+body, html {
+  height: 100%;
+  margin: 0;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+/* 🎨 Fondo animado idéntico al Login */
+.register-page-wrapper {
+  position: relative;
+  background-color: #f8f9fa !important;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  overflow-x: hidden; 
+}
+
+/* ✨ Formas abstractas */
+.bg-shape {
+  position: absolute;
+  filter: blur(90px);
+  z-index: 0;
+  border-radius: 50%;
+  animation: floatShape 12s infinite ease-in-out alternate;
+  opacity: 0.6;
+}
+
+.shape-1 {
+  width: 400px;
+  height: 400px;
+  background-color: #00b4db !important;
+  top: -50px;
+  left: -50px;
+}
+
+.shape-2 {
+  width: 500px;
+  height: 500px;
+  background-color: #ffc107 !important;
+  bottom: -100px;
+  right: -50px;
+  animation-delay: -5s;
+}
+
+.shape-3 {
+  width: 300px;
+  height: 300px;
+  background-color: #2a5298 !important;
+  top: 50%;
+  left: 20%;
+  animation-delay: -2s;
+}
+
+@keyframes floatShape {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(30px, 40px) scale(1.1); }
+}
+
+/* 🃏 Tarjeta de Registro (Glassmorphism + Dark Mode) */
+.register-card {
+  position: relative;
+  z-index: 1; 
+  background-color: #0f2027 !important; /* Base oscura elegante */
+  background: linear-gradient(145deg, rgba(15, 32, 39, 0.95) 0%, rgba(32, 58, 67, 0.95) 100%) !important;
+  backdrop-filter: blur(15px) !important; 
+  width: 100%;
+  max-width: 1000px;
+  border-radius: 24px;
+  padding: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* 🖌️ Inputs Personalizados (Estilo Claro sobre Fondo Oscuro) */
+.input-group-custom {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 15px;
+  font-size: 1rem;
+  pointer-events: none;
+  z-index: 10;
+  color: #00b4db !important;
+}
+
+.input-group-custom .form-control {
+  width: 100%;
+  height: 50px; /* Un poco más compactos para que quepan todos */
+  padding-left: 45px; 
+  border-radius: 10px;
+  border: 2px solid transparent !important;
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  color: #2b2b2b !important;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.input-group .form-control {
+  font-size: 0.9rem;
+  color: #2b2b2b !important;
+}
+
+.input-group-custom .form-control::placeholder {
+  color: #6c757d !important;
+}
+
+.input-group-custom .form-control:focus,
+.input-group .form-control:focus {
+  border-color: #00b4db !important;
+  box-shadow: 0 0 0 4px rgba(0, 180, 219, 0.2) !important;
+  background-color: #ffffff !important;
+  outline: none;
+}
+
+/* Campos de Solo Lectura (RENIEC) */
+.form-control[readonly] {
+  background-color: rgba(255, 255, 255, 0.6) !important;
+  cursor: not-allowed;
+}
+
+/* 🔘 Botón Principal Turquesa */
+.btn-primary-gradient {
+  background-color: #00b4db !important; 
+  background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%) !important;
+  border: none !important;
+  color: #ffffff !important;
+  transition: all 0.3s ease;
+}
+
+.btn-primary-gradient:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 180, 219, 0.4) !important;
+}
+
+.btn-primary-gradient:active {
+  transform: translateY(1px);
+}
+
+/* Botón RENIEC Amarillo */
+.btn-warning {
+  background-color: #ffc107 !important;
+  border-color: #ffc107 !important;
+  color: #212529 !important;
+  transition: all 0.2s ease;
+}
+.btn-warning:hover {
+  background-color: #e0a800 !important;
+  transform: translateY(-2px);
+}
+
+.custom-link:hover {
+  color: #ffc107 !important;
+  text-decoration: underline !important;
+}
+
+/* 📱 Responsive */
+@media (max-width: 991.98px) {
+  .register-card {
+    padding: 30px 20px;
+    margin: 20px 0;
+  }
+}

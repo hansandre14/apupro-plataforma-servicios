@@ -1,0 +1,232 @@
+/* login.css - Diseño ApuPro Moderno (Código Reforzado) */
+
+body, html {
+  height: 100%;
+  margin: 0;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+/* 🎨 El fondo principal donde ocurren las animaciones */
+.login-page-wrapper {
+  position: relative;
+  background-color: #f8f9fa !important;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  overflow: hidden; 
+}
+
+/* ✨ Formas abstractas de fondo para llenar los costados */
+.bg-shape {
+  position: absolute;
+  filter: blur(90px);
+  z-index: 0;
+  border-radius: 50%;
+  animation: floatShape 12s infinite ease-in-out alternate;
+  opacity: 0.6;
+}
+
+.shape-1 {
+  width: 400px;
+  height: 400px;
+  background-color: #00b4db !important;
+  top: -100px;
+  left: -100px;
+}
+
+.shape-2 {
+  width: 500px;
+  height: 500px;
+  background-color: #ffc107 !important;
+  bottom: -150px;
+  right: -100px;
+  animation-delay: -5s;
+}
+
+.shape-3 {
+  width: 300px;
+  height: 300px;
+  background-color: #2a5298 !important;
+  bottom: 10%;
+  left: 15%;
+  animation-delay: -2s;
+}
+
+@keyframes floatShape {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(40px, 60px) scale(1.1); }
+}
+
+/* 🃏 Tarjeta de Login Centrada (Efecto Cristal) */
+.login-card {
+  position: relative;
+  z-index: 1; 
+  display: flex;
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px) !important; 
+  width: 100%;
+  max-width: 950px;
+  min-height: 600px;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* 🛡️ Panel Izquierdo (Marca y Pilares) */
+.login-brand-side {
+  flex: 0 0 45%;
+  background-color: #0f2027 !important; /* Respaldo sólido */
+  background: linear-gradient(145deg, #0f2027 0%, #203a43 100%) !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 50px 40px;
+}
+
+/* Forzando el texto blanco en el panel izquierdo */
+.login-brand-side h1,
+.login-brand-side h6,
+.login-brand-side p,
+.login-brand-side small {
+  color: #ffffff !important;
+}
+
+.brand-content {
+  width: 100%;
+  max-width: 320px;
+}
+
+.icon-box {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.1) !important; /* Fondo transparente blanco */
+}
+
+.icon-box:hover {
+  transform: scale(1.1);
+}
+
+/* 📝 Panel Derecho (Formulario) */
+.login-form-side {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent !important;
+}
+
+.form-content {
+  width: 100%;
+  max-width: 420px;
+}
+
+h2.text-primary {
+  color: #0f2027 !important;
+}
+
+.text-muted {
+  color: #6c757d !important;
+}
+
+label.text-muted {
+  color: #2b2b2b !important;
+  opacity: 0.8;
+}
+
+/* 🖌️ Inputs Personalizados */
+.input-group-custom {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 20px;
+  font-size: 1.1rem;
+  pointer-events: none;
+  z-index: 10;
+  color: #00b4db !important;
+}
+
+.input-group-custom .form-control {
+  width: 100%;
+  height: 60px;
+  padding-left: 60px;
+  border-radius: 14px;
+  border: 2px solid #eef2f5 !important;
+  background-color: #fcfdfd !important;
+  color: #2b2b2b !important;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.input-group-custom .form-control::placeholder {
+  color: #aab8c2 !important;
+}
+
+.input-group-custom .form-control:focus {
+  border-color: #00b4db !important;
+  box-shadow: 0 0 0 4px rgba(0, 180, 219, 0.15) !important;
+  background-color: #ffffff !important;
+  outline: none;
+}
+
+/* 🔘 Botón con Degradado Vibrante */
+.btn-primary-gradient {
+  background-color: #00b4db !important; /* Respaldo sólido */
+  background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%) !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.btn-primary-gradient:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 180, 219, 0.4) !important;
+}
+
+.btn-primary-gradient:active {
+  transform: translateY(1px);
+}
+
+/* 🔗 Links */
+.custom-link {
+  color: #00b4db !important;
+  transition: color 0.2s ease;
+}
+
+.custom-link:hover {
+  color: #0083b0 !important;
+}
+
+.hover-teal:hover {
+  color: #00b4db !important;
+}
+
+/* 📱 Móviles */
+@media (max-width: 991.98px) {
+  .login-card {
+    flex-direction: column;
+    min-height: auto;
+    border-radius: 15px;
+    margin: 20px;
+  }
+  .login-brand-side {
+    padding: 30px 20px;
+  }
+  .brand-features {
+    display: none;
+  }
+}

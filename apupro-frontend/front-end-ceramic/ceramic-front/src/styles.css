@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
+
+:root {
+    --primary-blue: #003366;
+    --secondary-aqua: #00bcd4;
+    --accent-yellow: #ffc107;
+    --clean-white: #ffffff;
+    --text-dark: #333333;
+    --bg-dashboard: #f4f6f9;
+}
+
+body { 
+    font-family: 'Poppins', sans-serif; 
+    margin: 0;
+    background-color: var(--bg-dashboard);
+}
+
+/* HERO SECTION - CORREGIDO */
+.hero-section {
+    background: linear-gradient(rgba(0, 51, 102, 0.8), rgba(0, 51, 102, 0.6)), 
+                url('/assets/img/Portada.png');
+    background-size: cover; 
+    background-position: center; 
+    min-height: 100vh;
+}
+.btn-cta { 
+    background-color: var(--accent-yellow) !important; 
+    color: var(--primary-blue) !important; 
+    font-weight: 800; 
+    border: none; 
+    padding: 15px 30px;
+    border-radius: 5px;
+    text-transform: uppercase;
+}
