@@ -79,7 +79,7 @@ git clone https://github.com/hansandre14/apupro-plataforma-servicios.git
     contraseña: Yanet1234.
     Usuario: patrick@gmail.com
     contraseña: Patrick1234.
-    Admin Principal: admin@Aadmin.com
+    Admin Principal: admin@admin.com
     contraseña: 74042894Andre%
     
 La aplicación se abrirá automáticamente en tu navegador en `http://localhost:4200/`.
