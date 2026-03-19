@@ -73,6 +73,15 @@ git clone https://github.com/hansandre14/apupro-plataforma-servicios.git
     \`\`\`bash
     ng serve -o
     \`\`\`
+
+    //// CUENTAS DE USUARIO
+    USUARIO: yanet@gmail.com
+    contraseña: Yanet1234.
+    Usuario: patrick@gmail.com
+    contraseña: Patrick1234.
+    Admin Principal: admin@Aadmin.com
+    contraseña: 74042894Andre%
+    
 La aplicación se abrirá automáticamente en tu navegador en `http://localhost:4200/`.
 
 ---
